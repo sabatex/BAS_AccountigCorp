@@ -164,24 +164,64 @@
 			<dataPath>Количество</dataPath>
 			<field>Количество</field>
 		</field>
+		<field xsi:type="DataSetFieldField">
+			<dataPath>НацінкаПроцент</dataPath>
+			<field>НацінкаПроцент</field>
+			<title xsi:type="v8:LocalStringType">
+				<v8:item>
+					<v8:lang>uk</v8:lang>
+					<v8:content>Націнка процент</v8:content>
+				</v8:item>
+			</title>
+			<valueType>
+				<v8:Type>xs:decimal</v8:Type>
+				<v8:NumberQualifiers>
+					<v8:Digits>10</v8:Digits>
+					<v8:FractionDigits>2</v8:FractionDigits>
+					<v8:AllowedSign>Any</v8:AllowedSign>
+				</v8:NumberQualifiers>
+			</valueType>
+		</field>
 		<dataSource>ИсточникДанных1</dataSource>
 		<query>ВЫБРАТЬ
+	ХозрасчетныйДвиженияССубконто.Регистратор КАК Регистратор,
+	ХозрасчетныйДвиженияССубконто.СубконтоКт1 КАК СубконтоКт1,
+	СУММА(ХозрасчетныйДвиженияССубконто.Сумма) КАК Сумма
+ПОМЕСТИТЬ Субівартвсть
+ИЗ
+	РегистрБухгалтерии.Хозрасчетный.ДвиженияССубконто КАК ХозрасчетныйДвиженияССубконто
+ГДЕ
+	ХозрасчетныйДвиженияССубконто.СчетДт.Код = "901"
+	И ХозрасчетныйДвиженияССубконто.Регистратор.Дата МЕЖДУ НАЧАЛОПЕРИОДА(&amp;BeginDate, ДЕНЬ) И КОНЕЦПЕРИОДА(&amp;EndDate, ДЕНЬ)
+
+СГРУППИРОВАТЬ ПО
+	ХозрасчетныйДвиженияССубконто.Регистратор,
+	ХозрасчетныйДвиженияССубконто.СубконтоКт1
+;
+
+////////////////////////////////////////////////////////////////////////////////
+ВЫБРАТЬ
 	РеализацияТоваровУслугТовары.Номенклатура КАК Номенклатура,
 	РеализацияТоваровУслугТовары.Сумма КАК Сумма1,
-	РеализацияТоваровУслугТовары.Сумма - ХозрасчетныйДвиженияССубконто.Сумма - РеализацияТоваровУслугТовары.СуммаНДС КАК Націнка,
+	РеализацияТоваровУслугТовары.Сумма - Субівартвсть.Сумма - РеализацияТоваровУслугТовары.СуммаНДС КАК Націнка,
 	РеализацияТоваровУслугТовары.Ссылка.Ссылка КАК Ссылка,
 	РеализацияТоваровУслугТовары.Ссылка.Организация КАК Организация,
 	РеализацияТоваровУслугТовары.Ссылка.ДоговорКонтрагента КАК ДоговорКонтрагента,
 	РеализацияТоваровУслугТовары.Ссылка.Контрагент КАК Контрагент,
-	ХозрасчетныйДвиженияССубконто.Сумма КАК Субівартість,
+	Субівартвсть.Сумма КАК Субівартість,
 	РеализацияТоваровУслугТовары.СуммаНДС КАК СуммаНДС,
 	РеализацияТоваровУслугТовары.Сумма - РеализацияТоваровУслугТовары.СуммаНДС КАК Сумма,
-	РеализацияТоваровУслугТовары.Количество КАК Количество
+	РеализацияТоваровУслугТовары.Количество КАК Количество,
+	ВЫБОР
+		КОГДА РеализацияТоваровУслугТовары.Сумма - Субівартвсть.Сумма - РеализацияТоваровУслугТовары.СуммаНДС &lt;= 0
+			ТОГДА 0
+		ИНАЧЕ ((РеализацияТоваровУслугТовары.Сумма - РеализацияТоваровУслугТовары.СуммаНДС) / Субівартвсть.Сумма - 1) * 100
+	КОНЕЦ КАК НацінкаПроцент
 ИЗ
 	Документ.РеализацияТоваровУслуг.Товары КАК РеализацияТоваровУслугТовары
-		ЛЕВОЕ СОЕДИНЕНИЕ РегистрБухгалтерии.Хозрасчетный.ДвиженияССубконто КАК ХозрасчетныйДвиженияССубконто
-		ПО РеализацияТоваровУслугТовары.Ссылка = ХозрасчетныйДвиженияССубконто.Регистратор
-			И РеализацияТоваровУслугТовары.Номенклатура = ХозрасчетныйДвиженияССубконто.СубконтоКт1
+		ЛЕВОЕ СОЕДИНЕНИЕ Субівартвсть КАК Субівартвсть
+		ПО РеализацияТоваровУслугТовары.Ссылка = Субівартвсть.Регистратор
+			И РеализацияТоваровУслугТовары.Номенклатура = Субівартвсть.СубконтоКт1
 ГДЕ
 	РеализацияТоваровУслугТовары.Ссылка.Проведен = ИСТИНА
 	И РеализацияТоваровУслугТовары.Ссылка.Дата МЕЖДУ НАЧАЛОПЕРИОДА(&amp;BeginDate, ДЕНЬ) И КОНЕЦПЕРИОДА(&amp;EndDate, ДЕНЬ)</query>
@@ -201,6 +241,10 @@
 	<totalField>
 		<dataPath>СуммаНДС</dataPath>
 		<expression>Сумма(СуммаНДС)</expression>
+	</totalField>
+	<totalField>
+		<dataPath>НацінкаПроцент</dataPath>
+		<expression>Среднее(НацінкаПроцент)</expression>
 	</totalField>
 	<parameter>
 		<name>BeginDate</name>
@@ -314,15 +358,42 @@
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>Сумма</dcsset:field>
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Сума без пдв</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>СуммаНДС</dcsset:field>
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>ПДВ</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>Субівартість</dcsset:field>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:SelectedItemField">
 					<dcsset:field>Націнка</dcsset:field>
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Націнка грн.</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
+				</dcsset:item>
+				<dcsset:item xsi:type="dcsset:SelectedItemField">
+					<dcsset:field>НацінкаПроцент</dcsset:field>
+					<dcsset:lwsTitle>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Націнка %</v8:content>
+						</v8:item>
+					</dcsset:lwsTitle>
 				</dcsset:item>
 			</dcsset:selection>
 			<dcsset:dataParameters>
@@ -353,11 +424,11 @@
 			</dcsset:dataParameters>
 			<dcsset:order>
 				<dcsset:item xsi:type="dcsset:OrderItemField">
-					<dcsset:field>Контрагент</dcsset:field>
+					<dcsset:field>Организация</dcsset:field>
 					<dcsset:orderType>Asc</dcsset:orderType>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:OrderItemField">
-					<dcsset:field>Организация</dcsset:field>
+					<dcsset:field>Контрагент</dcsset:field>
 					<dcsset:orderType>Asc</dcsset:orderType>
 				</dcsset:item>
 				<dcsset:item xsi:type="dcsset:OrderItemField">
@@ -373,6 +444,43 @@
 					<dcsset:orderType>Asc</dcsset:orderType>
 				</dcsset:item>
 			</dcsset:order>
+			<dcsset:conditionalAppearance>
+				<dcsset:item>
+					<dcsset:selection>
+						<dcsset:item>
+							<dcsset:field>НацінкаПроцент</dcsset:field>
+						</dcsset:item>
+					</dcsset:selection>
+					<dcsset:filter/>
+					<dcsset:appearance>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:parameter>Формат</dcscor:parameter>
+							<dcscor:value xsi:type="v8:LocalStringType">
+								<v8:item>
+									<v8:lang>uk</v8:lang>
+									<v8:content>NFD=2</v8:content>
+								</v8:item>
+							</dcscor:value>
+						</dcscor:item>
+					</dcsset:appearance>
+				</dcsset:item>
+				<dcsset:item>
+					<dcsset:selection/>
+					<dcsset:filter>
+						<dcsset:item xsi:type="dcsset:FilterItemComparison">
+							<dcsset:left xsi:type="dcscor:Field">Націнка</dcsset:left>
+							<dcsset:comparisonType>Less</dcsset:comparisonType>
+							<dcsset:right xsi:type="xs:decimal">0</dcsset:right>
+						</dcsset:item>
+					</dcsset:filter>
+					<dcsset:appearance>
+						<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+							<dcscor:parameter>ЦветФона</dcscor:parameter>
+							<dcscor:value xsi:type="v8ui:Color">style:NegativeTextColor</dcscor:value>
+						</dcscor:item>
+					</dcsset:appearance>
+				</dcsset:item>
+			</dcsset:conditionalAppearance>
 			<dcsset:item xsi:type="dcsset:StructureItemGroup">
 				<dcsset:groupItems>
 					<dcsset:item xsi:type="dcsset:GroupItemField">

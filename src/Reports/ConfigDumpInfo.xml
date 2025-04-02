@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ConfigDumpInfo xmlns="http://v8.1c.ru/8.3/xcf/dumpinfo" xmlns:xen="http://v8.1c.ru/8.3/xcf/enums" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" format="Hierarchical" version="2.12">
 	<ConfigVersions>
-		<Metadata name="Configuration.SabatexReports" id="af1a1ce8-3eeb-4d6b-9a1c-6dea0c067f34" configVersion="a976270d2cfae110ddfcb4536d9416f9bf78a272"/>
+		<Metadata name="Configuration.SabatexReports" id="af1a1ce8-3eeb-4d6b-9a1c-6dea0c067f34" configVersion="46bdc7a14086179df11b1d4a09509577aad328f0"/>
 		<Metadata name="Language.Украинский" id="694771b2-0a6d-4b69-a020-ed1f81898f17" configVersion="f31e7194eae68830bd3afe00d63caa2bce49deb9"/>
 		<Metadata name="Report.СобівартістьПоДокументамРеалізації" id="8a171afb-2583-462e-b870-1f024d6ac477" configVersion="4056c71294e9f30ea9843664b1684a0605ed2961"/>
 		<Metadata name="Report.СобівартістьПоДокументамРеалізації.ObjectModule" id="8a171afb-2583-462e-b870-1f024d6ac477.0" configVersion="94b39d826ed3ab5afe295c97a37107dc688ab4ec"/>
 		<Metadata name="Report.СобівартістьПоДокументамРеалізації.Template.ОсновнаяСхемаКомпоновкиДанных" id="1fbad63b-d3fc-48c4-a71f-24d1d89c5c25" configVersion="240981d60eb4b0f2b45b51a015134fe6b6c8a8c7"/>
-		<Metadata name="Report.СобівартістьПоДокументамРеалізації.Template.ОсновнаяСхемаКомпоновкиДанных.Template" id="1fbad63b-d3fc-48c4-a71f-24d1d89c5c25.0" configVersion="61c91cb1bde2b8fa3e77971572e02720f1c6971b"/>
+		<Metadata name="Report.СобівартістьПоДокументамРеалізації.Template.ОсновнаяСхемаКомпоновкиДанных.Template" id="1fbad63b-d3fc-48c4-a71f-24d1d89c5c25.0" configVersion="c8b1ab11896b40b85af46c44a9d1325d7db46181"/>
 		<Metadata name="Subsystem.Продажи" id="1a7dbe01-4747-40ae-8731-9662f3b6f0b3" configVersion="aa99c271927cf38957b69fe4f2a93006e5c7f282"/>
 	</ConfigVersions>
 </ConfigDumpInfo>
